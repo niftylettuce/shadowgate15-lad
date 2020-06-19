@@ -133,5 +133,6 @@
   "Sign out of &#124; <span class=\"notranslate\">Lad</span>": "Sign out of &#124; <span class=\"notranslate\">Lad</span>",
   "Sign out of your account": "Sign out of your account",
   "Hello": "Hello",
-  "Authentication is not possible.  No salt value was stored for the account.": "Authentication is not possible.  No salt value was stored for the account."
+  "Authentication is not possible.  No salt value was stored for the account.": "Authentication is not possible.  No salt value was stored for the account.",
+  "Your request was successfully completed.": "Your request was successfully completed."
 }

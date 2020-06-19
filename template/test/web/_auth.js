@@ -5,7 +5,6 @@ const cryptoRandomString = require('crypto-random-string');
 const phrases = require('../../config/phrases');
 const { Users } = require('../../app/models');
 
-test('successfully registers with strong password', async t => {
   const res = await global.web.post('/en/register', {
     body: {
       email: 'test12@example.com',
