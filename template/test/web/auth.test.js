@@ -1,41 +1,26 @@
 // Libraries required for testing
 const test = require('ava');
 const request = require('supertest');
-const { MongoMemoryServer } = require('mongodb-memory-server');
-const mongoose = require('mongoose');
 
-// server and models
-const server = require('../../web');
 const { Users } = require('../../app/models');
 
-// Start MongoDB instance
-const mongod = new MongoMemoryServer();
+const { before, beforeEach, afterEach, after } = require('../_utils');
 
-// Create connection to Mongoose before tests are run
-test.before(async () => {
-  const uri = await mongod.getConnectionString();
-  await mongoose.connect(uri, {useMongoClient: true});
-});
+test.before(before);
+test.after.always(after);
+test.beforeEach(beforeEach);
+test.afterEach.always(afterEach);
 
-test.beforeEach(async t => {
-  const user = new Users({
-    email: 'johnwayne@example.com',
-    password: '@!#SAL:DMA:SKLM!@'
+test.serial('creates new user', async t => {
+  const app = await request(t.context.web.server);
+  const res = await app.post('/en/register').send({
+    email: 'lordbyron@example.com',
+    password: '?X#8Hn=PbkvTD/{'
   });
-  await user.save();
 
-  t.context.app = request.agent(server.listen());
-});
+  t.is(res.header.location, '/en/dashboard');
+  t.is(res.status, 302);
 
-test.afterEach.always(() => Users.remove());
-
-test.serial('successful server setup', async t => {
-  const { app } = t.context;
-  const res = await app.get('/en');
-  t.is(res.status, 200);
-});
-
-test.after.always(async () => {
-  mongoose.disconnect();
-  mongod.stop();
+  const newUser = await Users.findOne({ email: 'lordbyron@example.com' });
+  t.is(newUser.email, 'lordbyron@example.com');
 });

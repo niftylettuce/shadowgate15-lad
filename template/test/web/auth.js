@@ -5,18 +5,6 @@ const cryptoRandomString = require('crypto-random-string');
 const phrases = require('../../config/phrases');
 const { Users } = require('../../app/models');
 
-test('creates new user', async t => {
-  const res = await global.web.post('/en/register', {
-    body: {
-      email: 'test@example.com',
-      password: '@!#SAL:DMA:SKLM!@'
-    }
-  });
-  t.is(res.body.redirectTo, '/en/dashboard');
-  // Should be 201 for success on create
-  t.is(res.status, 200);
-});
-
 test('fails registering with easy password', async t => {
   const res = await global.web.post('/en/register', {
     body: {
@@ -309,18 +297,4 @@ test('fails resetting password if reset was already tried in the last 30 mins', 
     res.body.message,
     util.format(phrases.PASSWORD_RESET_LIMIT, 'in 30 minutes')
   );
-});
-
-test.only('successfully logout', async t => {
-  const email = 'logout@example.com';
-  const password = '!@K#NLK!#N';
-
-  let res = await global.web.post('/en/register', { body: { email, password } });
-
-  res = await global.web.post('/en/login', { body: { email, password } });
-  t.log(res.body);
-
-  await global.web.get('/en/dashboard');
-
-  t.fail();
 });
