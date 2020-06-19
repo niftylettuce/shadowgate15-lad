@@ -2,9 +2,11 @@
 // Librarires required for testing
 const MongodbMemoryServer = require('mongodb-memory-server').default;
 const mongoose = require('mongoose');
+const request = require('supertest');
 
 // Models and server
 const web = require('../web');
+const api = require('../api');
 const { Users } = require('../app/models');
 
 const mongod = new MongodbMemoryServer();
@@ -24,7 +26,8 @@ exports.beforeEach = async t => {
 
   await user.save();
 
-  t.context.web = web;
+  t.context.web = await request.agent(web.server);
+  t.context.api = await request.agent(api.server);
 };
 
 exports.afterEach = async () => {
@@ -34,4 +37,13 @@ exports.afterEach = async () => {
 exports.after = async () => {
   mongoose.disconnect();
   mongod.stop();
+};
+
+exports.login = async web => {
+  await web.post('/en/login').send({
+    email: 'robertfrost@example.com',
+    password: '?X#8Hn=PbkvTD/{'
+  });
+
+  return web;
 };
