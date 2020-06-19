@@ -310,3 +310,17 @@ test('fails resetting password if reset was already tried in the last 30 mins', 
     util.format(phrases.PASSWORD_RESET_LIMIT, 'in 30 minutes')
   );
 });
+
+test.only('successfully logout', async t => {
+  const email = 'logout@example.com';
+  const password = '!@K#NLK!#N';
+
+  let res = await global.web.post('/en/register', { body: { email, password } });
+
+  res = await global.web.post('/en/login', { body: { email, password } });
+  t.log(res.body);
+
+  await global.web.get('/en/dashboard');
+
+  t.fail();
+});
