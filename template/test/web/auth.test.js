@@ -4,7 +4,7 @@ const test = require('ava');
 const phrases = require('../../config/phrases');
 const { Users } = require('../../app/models');
 
-const { before, beforeEach, afterEach, after } = require('../_utils');
+const { before, beforeEach, afterEach, after, login } = require('../_utils');
 
 test.before(before);
 test.after.always(after);
@@ -39,4 +39,12 @@ test('fails registering with easy password', async t => {
   // make sure user was not added to database
   const newUser = await Users.findOne({ email: 'emilydickinson@example.com' });
   t.is(newUser, null);
+});
+
+test('successfully logout', async t => {
+  const web = await login(t.context.web);
+  const res = await web.get('/en/logout');
+
+  t.is(res.header.location, '/en');
+  t.is(res.status, 302);
 });

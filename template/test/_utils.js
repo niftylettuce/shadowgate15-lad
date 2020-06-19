@@ -8,6 +8,7 @@ const request = require('supertest');
 const web = require('../web');
 const api = require('../api');
 const { Users } = require('../app/models');
+const config = require('../config');
 
 const mongod = new MongodbMemoryServer();
 
@@ -19,12 +20,13 @@ exports.before = async () => {
 
 // create fixtures before each test
 exports.beforeEach = async t => {
-  const user = new Users({
+  const query = {
     email: 'robertfrost@example.com',
-    password: '?X#8Hn=PbkvTD/{'
-  });
-
-  await user.save();
+    group: 'admin'
+  };
+  query[config.userFields.hasVerifiedEmail] = true;
+  query[config.userFields.hasSetPassword] = true;
+  await Users.register(query, '?X#8Hn=PbkvTD/{');
 
   t.context.web = await request.agent(web.server);
   t.context.api = await request.agent(api.server);
