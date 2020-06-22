@@ -1,35 +1,45 @@
 const test = require('ava');
 
+const { before, beforeEach, afterEach, after } = require('../_utils');
+
+test.before(before);
+test.after.always(after);
+test.beforeEach(beforeEach);
+test.afterEach.always(afterEach);
+
 test('redirects to correct locale', async t => {
-  const res = await global.web.get('/');
+  const { web } = t.context;
+  const res = await web.get('/');
   t.is(res.status, 200);
   t.true(res.url.endsWith('/en'));
 });
 
 test('returns English homepage', async t => {
-  const res = await global.web.get('/en', { headers: { Accept: 'text/html' } });
+  const { web } = t.context;
+  const res = await web.get('/en').set({ Accept: 'text/html' });
 
   t.snapshot(res.text);
 });
 
 test('returns Spanish homepage', async t => {
-  const res = await global.web.get('/es', { headers: { Accept: 'text/html' } });
+  const { web } = t.context;
+  const res = await web.get('/es').set({ Accept: 'text/html' });
 
   t.snapshot(res.text);
 });
 
 test('returns English ToS', async t => {
-  const res = await global.web.get('/en/terms', {
-    headers: { Accept: 'text/html' }
-  });
+  const { web } = t.context;
+  const res = await web.get('/en/terms')
+    .set({ Accept: 'text/html' });
 
   t.snapshot(res.text);
 });
 
 test('returns Spanish ToS', async t => {
-  const res = await global.web.get('/es/terms', {
-    headers: { Accept: 'text/html' }
-  });
+  const { web } = t.context;
+  const res = await web.get('/es/terms')
+    .set({ Accept: 'text/html' });
 
   t.snapshot(res.text);
 });
