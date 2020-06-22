@@ -9,7 +9,8 @@ test.afterEach.always(afterEach);
 
 test('creates inquiry', async t => {
   const { web } = t.context;
-  const res = await web.post('/en/support')
+  const res = await web
+    .post('/en/support')
     .send({ email: 'test@example.com', message: 'Test message!' });
 
   t.is(
@@ -20,10 +21,12 @@ test('creates inquiry', async t => {
 
 test('fails creating inquiry if last inquiry was within last 24 hours (HTML)', async t => {
   const { web } = t.context;
-  await global.web.post('/en/support')
+  await web
+    .post('/en/support')
     .send({ email: 'test2@example.com', message: 'Test message!' });
 
-  const res = await web.post('/en/support')
+  const res = await web
+    .post('/en/support')
     .set({ Accept: 'text/html' })
     .send({
       email: 'test2@example.com',
@@ -36,17 +39,15 @@ test('fails creating inquiry if last inquiry was within last 24 hours (HTML)', a
 
 test('fails creating inquiry if last inquiry was within last 24 hours (JSON)', async t => {
   const { web } = t.context;
-  await web.post('/en/support')
-    .send({
-      email: 'test3@example.com',
-      message: 'Test message!'
-    });
+  await web.post('/en/support').send({
+    email: 'test3@example.com',
+    message: 'Test message!'
+  });
 
-  const res = await web.post('/en/support')
-    .send({
-      email: 'test3@example.com',
-      message: 'Test message!'
-    });
+  const res = await web.post('/en/support').send({
+    email: 'test3@example.com',
+    message: 'Test message!'
+  });
 
   t.is(res.status, 400);
   t.is(
