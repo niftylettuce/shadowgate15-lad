@@ -144,5 +144,7 @@
   "Page not found &#124; <span class=\"notranslate\">Lad</span>": "Page not found &#124; <span class=\"notranslate\">Lad</span>",
   "The page you requested could not be found": "The page you requested could not be found",
   "Page not found": "Page not found",
-  "We're sorry, but the page you requested could not be found.": "We're sorry, but the page you requested could not be found."
+  "We're sorry, but the page you requested could not be found.": "We're sorry, but the page you requested could not be found.",
+  "Server error &#124; <span class=\"notranslate\">Lad</span>": "Server error &#124; <span class=\"notranslate\">Lad</span>",
+  "A server error has unfortunately occurred": "A server error has unfortunately occurred"
 }
