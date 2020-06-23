@@ -48,7 +48,15 @@ test.todo('GET /:locale/dashboard');
 test('GET /:locale/about', async t => {
   const { web } = t.context;
   const res = await web.get('/en/about');
-  debugger;
+
   t.is(res.status, 200);
   t.assert(res.text.includes('About'));
+});
+
+test('GET /:locale/404', async t => {
+  const { web } = t.context;
+  const res = await web.get('/en/404');
+
+  t.is(res.status, 200);
+  t.assert(res.text.includes('Page not found'));
 });
