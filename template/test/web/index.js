@@ -68,3 +68,11 @@ test('GET /:locale/500', async t => {
   t.is(res.status, 200);
   t.assert(res.text.includes('Server Error'));
 });
+
+test('GET /:locale/privacy', async t => {
+  const { web } = t.context;
+  const res = await web.get('/en/privacy');
+
+  t.is(res.status, 200);
+  t.assert(res.text.includes('Privacy Policy'));
+});
