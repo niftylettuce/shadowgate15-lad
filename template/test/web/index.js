@@ -43,8 +43,6 @@ test('returns Spanish ToS', async t => {
   t.snapshot(res.text);
 });
 
-test.todo('GET /:locale/dashboard');
-
 test('GET /:locale/about', async t => {
   const { web } = t.context;
   const res = await web.get('/en/about');
@@ -75,4 +73,12 @@ test('GET /:locale/privacy', async t => {
 
   t.is(res.status, 200);
   t.assert(res.text.includes('Privacy Policy'));
+});
+
+test('GET /:locale/support', async t => {
+  const { web } = t.context;
+  const res = await web.get('/en/support');
+
+  t.is(res.status, 200);
+  t.assert(res.text.includes('Contact Support'));
 });
