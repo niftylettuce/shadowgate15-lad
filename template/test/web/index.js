@@ -42,3 +42,13 @@ test('returns Spanish ToS', async t => {
 
   t.snapshot(res.text);
 });
+
+test.todo('GET /:locale/dashboard');
+
+test('GET /:locale/about', async t => {
+  const { web } = t.context;
+  const res = await web.get('/en/about');
+  debugger;
+  t.is(res.status, 200);
+  t.assert(res.text.includes('About'));
+});

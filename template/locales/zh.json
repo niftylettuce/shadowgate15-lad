@@ -135,5 +135,10 @@
   "Hello": "Hello",
   "Authentication is not possible.  No salt value was stored for the account.": "Authentication is not possible.  No salt value was stored for the account.",
   "Your request was successfully completed.": "Your request was successfully completed.",
-  "Please log out to view the page you requested.": "Please log out to view the page you requested."
+  "Please log out to view the page you requested.": "Please log out to view the page you requested.",
+  "About &#124; <span class=\"notranslate\">Lad</span>": "About &#124; <span class=\"notranslate\">Lad</span>",
+  "Learn more about Lad": "Learn more about Lad",
+  "Dependencies and development dependencies are listed below.": "Dependencies and development dependencies are listed below.",
+  "Dependencies": "Dependencies",
+  "Development Dependencies": "Development Dependencies"
 }
