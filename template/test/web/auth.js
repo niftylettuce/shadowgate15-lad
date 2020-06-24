@@ -4,6 +4,7 @@ const test = require('ava');
 const cryptoRandomString = require('crypto-random-string');
 
 const phrases = require('../../config/phrases');
+const config = require('../../config');
 const { Users } = require('../../app/models');
 
 const { before, beforeEach, afterEach, after, login } = require('../_utils');
@@ -79,7 +80,9 @@ test('fails registering invalid email', async t => {
     email: 'test123',
     password: 'testpassword'
   });
+
   t.is(res.status, 400);
+  t.is(JSON.parse(res.text).message, phrases.INVALID_EMAIL);
 });
 
 test("doesn't leak used email", async t => {
@@ -90,13 +93,14 @@ test("doesn't leak used email", async t => {
   await web.post('/en/register').send({ email, password });
   await web.get('/en/logout');
 
-  const res = await web.post('/en/register').send({
-    email,
-    password: 'wrongpassword'
-  });
+  const res = await web.post('/en/register')
+    .send({
+      email,
+      password: 'wrongpassword'
+    });
 
   t.is(res.status, 400);
-  t.is(res.body.message, phrases.PASSPORT_USER_EXISTS_ERROR);
+  t.is(JSON.parse(res.text).message, phrases.PASSPORT_USER_EXISTS_ERROR);
 });
 
 test('allows password reset for valid email (HTML)', async t => {
@@ -111,7 +115,8 @@ test('allows password reset for valid email (HTML)', async t => {
     .set({ Accept: 'text/html' })
     .send({ email });
 
-  t.is(res.status, 200);
+  t.is(res.status, 302);
+  t.is(res.header.location, '/');
 });
 
 test('allows password reset for valid email (JSON)', async t => {
@@ -123,8 +128,8 @@ test('allows password reset for valid email (JSON)', async t => {
 
   const res = await web.post('/en/forgot-password').send({ email });
 
-  t.is(res.status, 200);
-  t.is(res.body.message, phrases.PASSWORD_RESET_SENT);
+  t.is(res.status, 302);
+  t.is(res.header.location, '/');
 });
 
 test('resets password with valid email and token (HTML)', async t => {
@@ -137,7 +142,7 @@ test('resets password with valid email and token (HTML)', async t => {
   await web.post('/en/forgot-password').send({ email });
 
   const user = await Users.findOne({ email })
-    .select(global.config.userFields.resetToken)
+    .select(config.userFields.resetToken)
     .exec();
 
   if (!user) {
@@ -149,7 +154,8 @@ test('resets password with valid email and token (HTML)', async t => {
     .set({ Accept: 'text/html' })
     .send({ email, password });
 
-  t.is(res.status, 200);
+  t.is(res.status, 302);
+  t.is(res.header.location, '/en');
 });
 
 test('resets password with valid email and token (JSON)', async t => {
@@ -173,8 +179,8 @@ test('resets password with valid email and token (JSON)', async t => {
     .post(`/en/reset-password/${user[global.config.userFields.resetToken]}`)
     .send({ email, password });
 
-  t.is(res.status, 200);
-  t.is(res.body.message, phrases.RESET_PASSWORD);
+  t.is(res.status, 302);
+  t.is(res.header.location, '/en');
 });
 
 test('fails resetting password for non-existent user', async t => {
@@ -187,7 +193,7 @@ test('fails resetting password for non-existent user', async t => {
     .send({ email, password });
 
   t.is(res.status, 400);
-  t.is(res.body.message, phrases.INVALID_RESET_PASSWORD);
+  t.is(JSON.parse(res.text).message, phrases.INVALID_RESET_PASSWORD);
 });
 
 test('fails resetting password with invalid reset token', async t => {
@@ -204,7 +210,7 @@ test('fails resetting password with invalid reset token', async t => {
     .send({ email, password });
 
   t.is(res.status, 400);
-  t.is(res.body.message, phrases.INVALID_RESET_PASSWORD);
+  t.is(JSON.parse(res.text).message, phrases.INVALID_RESET_PASSWORD);
 });
 
 test('fails resetting password with missing new password', async t => {
@@ -229,7 +235,7 @@ test('fails resetting password with missing new password', async t => {
     .send({ email });
 
   t.is(res.status, 400);
-  t.is(res.body.message, phrases.INVALID_PASSWORD);
+  t.is(JSON.parse(res.text).message, phrases.INVALID_PASSWORD);
 });
 
 test('fails resetting password with invalid email', async t => {
@@ -254,7 +260,7 @@ test('fails resetting password with invalid email', async t => {
     .send({ email: 'wrongemail' });
 
   t.is(res.status, 400);
-  t.is(res.body.message, phrases.INVALID_EMAIL);
+  t.is(JSON.parse(res.text).message, phrases.INVALID_EMAIL);
 });
 
 test('fails resetting password with invalid email + reset token match', async t => {
@@ -277,7 +283,7 @@ test('fails resetting password with invalid email + reset token match', async t 
     .send({ email: 'wrongemail@example.com', password });
 
   t.is(res.status, 400);
-  t.is(res.body.message, phrases.INVALID_RESET_PASSWORD);
+  t.is(JSON.parse(res.text).message, phrases.INVALID_RESET_PASSWORD);
 });
 
 test('fails resetting password if new password is too weak', async t => {
@@ -302,7 +308,7 @@ test('fails resetting password if new password is too weak', async t => {
     .send({ email, password: 'password' });
 
   t.is(res.status, 400);
-  t.is(res.body.message, phrases.INVALID_PASSWORD_STRENGTH);
+  t.is(JSON.parse(res.text).message, phrases.INVALID_PASSWORD_STRENGTH);
 });
 
 test('fails resetting password if reset was already tried in the last 30 mins', async t => {
@@ -318,7 +324,7 @@ test('fails resetting password if reset was already tried in the last 30 mins', 
 
   t.is(res.status, 400);
   t.is(
-    res.body.message,
+    JSON.parse(res.text).message,
     util.format(phrases.PASSWORD_RESET_LIMIT, 'in 30 minutes')
   );
 });
