@@ -197,6 +197,7 @@
     "remark-cli": "^8.0.0",
     "remark-preset-github": "^2.0.0",
     "stylelint": "^13.6.1",
+    "sinon": "^9.0.2",
     "stylelint-config-recommended-scss": "^4.2.0",
     "stylelint-scss": "^3.18.0",
     "supertest": "^4.0.2",

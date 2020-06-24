@@ -1,6 +1,7 @@
 // Libraries required for testing
 const util = require('util');
 const test = require('ava');
+const sinon = require('sinon');
 const cryptoRandomString = require('crypto-random-string');
 
 const phrases = require('../../config/phrases');
@@ -14,8 +15,19 @@ test.after.always(after);
 test.beforeEach(beforeEach);
 test.afterEach.always(afterEach);
 
-test.serial('creates new user', async t => {
+test.only('creates new user', async t => {
   const { web } = t.context;
+  const user = [{
+    id: 1,
+    email: 'lordbyron@example.com',
+    password: '?X#8Hn=PbkvTD/{',
+    group: 'user'
+  }];
+  t.context.register = sinon.stub(Users, 'register').resolves(user);
+  t.context.authenticate.yields(null, { id: 1 });
+  t.context.serialize.yields(null, { id: 1 });
+  t.context.deserialize.yields(null, { id: 1 });
+
   const res = await web.post('/en/register').send({
     email: 'lordbyron@example.com',
     password: '?X#8Hn=PbkvTD/{'
@@ -27,6 +39,8 @@ test.serial('creates new user', async t => {
   // make sure user was added to database
   const newUser = await Users.findOne({ email: 'lordbyron@example.com' });
   t.is(newUser.email, 'lordbyron@example.com');
+
+  t.context.register.restore();
 });
 
 test('fails registering with easy password', async t => {
